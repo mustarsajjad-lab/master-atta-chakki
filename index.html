@@ -1,755 +1,87 @@
-<!DOCTYPE html>
-<html lang="sd" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0b1f3a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>ماسٽر اٽي چڪي نظام — سجاد خان وساڻ</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230b1f3a'/%3E%3Ccircle cx='96' cy='84' r='46' fill='none' stroke='%23ffffff' stroke-width='8'/%3E%3Ccircle cx='96' cy='84' r='14' fill='%23f59e0b'/%3E%3Cpath d='M96 44v14M96 110v14M56 84h14M122 84h14' stroke='%23ffffff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22%D9%85%D8%A7%D8%B3%D9%BD%D8%B1%20%D8%A7%D9%BD%D9%8A%20%DA%86%DA%AA%D9%8A%20%D9%86%D8%B8%D8%A7%D9%85%22%2C%22short_name%22%3A%22%D9%85%D8%A7%D8%B3%D9%BD%D8%B1%20%DA%86%DA%AA%D9%8A%22%2C%22display%22%3A%22standalone%22%2C%22dir%22%3A%22rtl%22%2C%22lang%22%3A%22sd%22%2C%22background_color%22%3A%22%230b1f3a%22%2C%22theme_color%22%3A%22%230b1f3a%22%7D">
-  <style>
-    :root {
-      --navy: #0b1f3a;
-      --navy-mid: #13325b;
-      --navy-light: #1e4b85;
-      --accent: #2563eb;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --border: #cbd5e1;
-      --success: #047857;
-      --success-bg: #ecfdf5;
-      --danger: #b91c1c;
-      --danger-bg: #fef2f2;
-      --warn: #b45309;
-      --warn-bg: #fffbeb;
-      --shadow: 0 2px 10px rgba(11, 31, 58, 0.08);
-      --radius: 14px;
-    }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body {
-      margin: 0; padding: 0; direction: rtl;
-      font-family: 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Droid Arabic Naskh', 'Tahoma', system-ui, -apple-system, sans-serif;
-      background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.65;
-    }
-    .ltr-num { direction: ltr; unicode-bidi: isolate; display: inline-block; }
-    .hidden { display: none !important; }
-    .app-header {
-      position: sticky; top: 0; z-index: 40;
-      background: linear-gradient(135deg, var(--navy), var(--navy-mid));
-      color: #ffffff; padding: 12px 14px; box-shadow: 0 3px 12px rgba(0,0,0,0.2);
-    }
-    .header-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .brand-title { margin: 0; font-size: 1.15rem; font-weight: 800; }
-    .brand-sub { font-size: 0.85rem; color: #cbd5e1; }
-    .status-bar {
-      margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 8px; font-size: 0.84rem; background: rgba(255,255,255,0.12); padding: 6px 10px; border-radius: 10px;
-    }
-    .pill {
-      display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
-      border-radius: 999px; font-size: 0.8rem; font-weight: 700;
-    }
-    .pill-offline { background: #14532d; color: #dcfce7; }
-    .pill-online { background: #1e3a8a; color: #dbeafe; }
-    .pill-warn { background: var(--warn-bg); color: var(--warn); }
-    .pill-success { background: var(--success-bg); color: var(--success); }
-    .pill-danger { background: var(--danger-bg); color: var(--danger); }
-    .pill-navy { background: #e2e8f0; color: var(--navy); }
-    .app-shell { display: flex; min-height: calc(100vh - 96px); }
-    .side-nav {
-      display: none; width: 245px; background: var(--navy); color: #fff; padding: 12px 10px; flex-shrink: 0;
-    }
-    .side-nav button {
-      width: 100%; text-align: right; background: transparent; border: none; color: #e2e8f0;
-      padding: 12px 14px; border-radius: 10px; font-family: inherit; font-size: 1rem;
-      font-weight: 600; cursor: pointer; margin-bottom: 4px;
-    }
-    .side-nav button.active, .side-nav button:hover { background: var(--navy-light); color: #ffffff; }
-    .main-content { flex: 1; padding: 14px 12px 92px 12px; max-width: 1120px; margin: 0 auto; width: 100%; }
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 45; background: var(--navy);
-      display: grid; grid-template-columns: repeat(5, 1fr); border-top: 2px solid var(--navy-light);
-      box-shadow: 0 -3px 12px rgba(0,0,0,0.18);
-    }
-    .bottom-nav button {
-      background: transparent; border: none; color: #cbd5e1; padding: 12px 4px;
-      font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
-    }
-    .bottom-nav button.active { color: #ffffff; background: var(--navy-light); }
-    .section-title {
-      margin: 0 0 12px 0; font-size: 1.22rem; color: var(--navy); font-weight: 800;
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-    }
-    .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow);
-    }
-    .card-title {
-      margin: 0 0 10px 0; font-size: 1.05rem; color: var(--navy); font-weight: 800;
-      border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;
-    }
-    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-    .kpi-card {
-      background: var(--card); border: 1px solid var(--border); border-right: 5px solid var(--navy);
-      border-radius: 12px; padding: 11px 12px; box-shadow: var(--shadow);
-    }
-    .kpi-card.green { border-right-color: var(--success); }
-    .kpi-card.red { border-right-color: var(--danger); }
-    .kpi-card.amber { border-right-color: var(--warn); }
-    .kpi-label { font-size: 0.84rem; color: var(--muted); font-weight: 700; }
-    .kpi-val { font-size: 1.02rem; font-weight: 800; color: var(--navy); margin-top: 3px; }
-    .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 12px 16px; border-radius: 11px; border: none; font-family: inherit;
-      font-size: 0.96rem; font-weight: 700; cursor: pointer; min-height: 46px;
-    }
-    .btn:active { opacity: 0.85; }
-    .btn-sm { padding: 7px 11px; min-height: 36px; font-size: 0.86rem; }
-    .btn-block { width: 100%; }
-    .btn-primary { background: var(--navy); color: #fff; }
-    .btn-accent { background: var(--accent); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-warn { background: var(--warn); color: #fff; }
-    .btn-outline { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
-    .btn-light { background: #e2e8f0; color: var(--navy); }
-    .form-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group label { font-weight: 700; color: var(--navy); font-size: 0.94rem; }
-    .form-control, select, textarea {
-      width: 100%; padding: 11px 12px; border: 1.5px solid var(--border); border-radius: 10px;
-      font-family: inherit; font-size: 1rem; background: #fff; color: var(--text); min-height: 46px;
-    }
-    .form-control:focus, select:focus {
-      outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(11,31,58,0.12);
-    }
-    .input-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; }
-    .hint-box {
-      background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a;
-      padding: 9px 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
-    }
-    .warn-box {
-      background: var(--warn-bg); border: 1px solid #fde68a; color: var(--warn);
-      padding: 9px 12px; border-radius: 10px; font-size: 0.92rem; font-weight: 700;
-    }
-    .danger-box {
-      background: var(--danger-bg); border: 1px solid #fecaca; color: var(--danger);
-      padding: 9px 12px; border-radius: 10px; font-size: 0.92rem; font-weight: 700;
-    }
-    .historical-panel {
-      background: #f8fafc; border: 1px dashed var(--navy-light); padding: 10px 12px; border-radius: 10px;
-    }
-    .check-label { display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; }
-    .check-label input[type="checkbox"] { width: 20px; height: 20px; }
-    .table-wrap { width: 100%; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-    th, td { padding: 9px 8px; border-bottom: 1px solid #e2e8f0; text-align: right; vertical-align: top; }
-    th { background: #f1f5f9; color: var(--navy); font-weight: 800; white-space: nowrap; }
-    .list-card { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #fff; }
-    .list-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-    .list-meta { font-size: 0.88rem; color: var(--muted); }
-    .action-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .sub-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-    .sub-tabs button {
-      padding: 8px 13px; border-radius: 10px; border: 1.5px solid var(--navy);
-      background: #fff; color: var(--navy); font-family: inherit; font-weight: 700; cursor: pointer;
-    }
-    .sub-tabs button.active { background: var(--navy); color: #fff; }
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(11,31,58,0.72); z-index: 100;
-      display: flex; align-items: center; justify-content: center; padding: 14px;
-    }
-    .modal-box {
-      background: #fff; border-radius: 16px; width: 100%; max-width: 680px;
-      max-height: 90vh; overflow-y: auto; padding: 16px; box-shadow: 0 12px 35px rgba(0,0,0,0.35);
-    }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px;
-    }
-    .pin-screen {
-      position: fixed; inset: 0; z-index: 200; background: linear-gradient(150deg, var(--navy), #071426);
-      color: #fff; display: flex; align-items: center; justify-content: center; padding: 20px;
-    }
-    .pin-card {
-      background: #fff; color: var(--text); border-radius: 18px; padding: 22px;
-      width: 100%; max-width: 380px; text-align: center;
-    }
-    .toast-wrap {
-      position: fixed; top: 74px; left: 50%; transform: translateX(-50%); z-index: 150;
-      width: calc(100% - 28px); max-width: 440px; display: flex; flex-direction: column; gap: 8px; pointer-events: none;
-    }
-    .toast {
-      padding: 11px 14px; border-radius: 12px; color: #fff; font-weight: 700;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.22); text-align: center;
-    }
-    .toast-success { background: var(--success); }
-    .toast-error { background: var(--danger); }
-    .toast-warn { background: var(--warn); }
-    .print-only-header { display: none; }
-    @media (min-width: 768px) {
-      .kpi-grid { grid-template-columns: repeat(4, 1fr); }
-      .quick-grid { grid-template-columns: repeat(4, 1fr); }
-      .form-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-      .side-nav { display: block; }
-      .bottom-nav { display: none; }
-      .main-content { padding: 20px 24px 36px 24px; }
-    }
-    @media print {
-      .app-header, .side-nav, .bottom-nav, .no-print, .sub-tabs, .toast-wrap, .modal-backdrop { display: none !important; }
-      body { background: #fff; color: #000; font-size: 13px; }
-      .main-content { padding: 0; max-width: 100%; }
-      .card { box-shadow: none; border: 1px solid #999; page-break-inside: avoid; }
-      .print-only-header { display: block !important; text-align: center; margin-bottom: 14px; border-bottom: 2px solid #000; padding-bottom: 8px; }
-    }
-  </style>
-</head>
-<body>
-
-  <header class="app-header">
-    <div class="header-top">
-      <div>
-        <h1 class="brand-title">ماسٽر اٽي چڪي نظام</h1>
-        <div class="brand-sub">مالڪ: سجاد خان وساڻ</div>
-      </div>
-      <div>
-        <button id="btnLockNow" class="btn btn-sm btn-light">لاڪ</button>
-      </div>
-    </div>
-    <div class="status-bar">
-      <span id="liveClock">—</span>
-      <span id="netStatus" class="pill pill-offline">مڪمل آف لائن فعال</span>
-    </div>
-  </header>
-
-  <div class="app-shell">
-    <aside class="side-nav" aria-label="مينو">
-      <button data-nav="dashboard" class="active">مکيه صفحو</button>
-      <button data-nav="deposit">ڪڻڪ جمع کاتو</button>
-      <button data-nav="grinding">پيهائي ۽ پيداوار</button>
-      <button data-nav="delivery">مال پهچائڻ</button>
-      <button data-nav="customers">گراهڪن جو کاتو</button>
-      <button data-nav="workers">مزدور ۽ حاضري</button>
-      <button data-nav="cash">آمدني، خرچ ۽ رقم</button>
-      <button data-nav="stock">موجود مال جو ذخيرو</button>
-      <button data-nav="reports">احوال (رپورٽون)</button>
-      <button data-nav="search">مڪمل ڳولا</button>
-      <button data-nav="settings">محفوظ نقل ۽ حفاظت</button>
-    </aside>
-
-    <main id="mainView" class="main-content"></main>
-  </div>
-
-  <nav class="bottom-nav" aria-label="موبائيل مينو">
-    <button data-nav="dashboard" class="active">مکيه</button>
-    <button data-nav="deposit">ڪڻڪ جمع</button>
-    <button data-nav="grinding">پيهائي</button>
-    <button data-nav="customers">گراهڪ</button>
-    <button data-nav="__MORE__">وڌيڪ</button>
-  </nav>
-
-  <div id="modalRoot" class="modal-backdrop hidden"></div>
-  <div id="toastWrap" class="toast-wrap"></div>
-
-  <div id="pinLockScreen" class="pin-screen hidden">
-    <div class="pin-card">
-      <h2 style="margin:0 0 6px 0;color:var(--navy);">ماسٽر اٽي چڪي نظام</h2>
-      <p style="margin:0 0 14px 0;color:var(--muted);">سجاد خان وساڻ — ذاتي کاتو</p>
-      <form id="pinUnlockForm" class="form-grid">
-        <div class="form-group">
-          <label>حفاظتي ڪوڊ داخل ڪريو</label>
-          <input type="password" inputmode="numeric" dir="ltr" id="pinUnlockInp" class="form-control" style="text-align:center;font-size:1.3rem;" placeholder="••••" required>
-        </div>
-        <div id="pinErr" style="color:var(--danger);font-weight:700;min-height:22px;"></div>
-        <button type="submit" class="btn btn-primary btn-block">کوليو</button>
-      </form>
-    </div>
-  </div>
-
-  <script>
-  (function () {
-    'use strict';
-
-    /* ==================== 1. LOCAL INDEXEDDB ENGINE ==================== */
-    const DB_NAME = 'MasterAttaChakkiDB';
-    const DB_VERSION = 1;
-    const STORES = [
-      'meta', 'customers', 'workers', 'deposits', 'grindings',
-      'deliveries', 'customerPayments', 'workerAttendance',
-      'workerPayments', 'expenses', 'incomes'
-    ];
-    let dbInstance = null;
-
-    function openDB() {
-      if (dbInstance) return Promise.resolve(dbInstance);
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = (e) => {
-          const db = e.target.result;
-          if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'key' });
-          if (!db.objectStoreNames.contains('customers')) {
-            const s = db.createObjectStore('customers', { keyPath: 'id' });
-            s.createIndex('code', 'code', { unique: true });
-            s.createIndex('name', 'name', { unique: false });
-          }
-          if (!db.objectStoreNames.contains('workers')) {
-            const s = db.createObjectStore('workers', { keyPath: 'id' });
-            s.createIndex('code', 'code', { unique: true });
-            s.createIndex('name', 'name', { unique: false });
-          }
-          ['deposits', 'grindings', 'deliveries', 'customerPayments'].forEach((n) => {
-            if (!db.objectStoreNames.contains(n)) {
-              const s = db.createObjectStore(n, { keyPath: 'id' });
-              s.createIndex('customerId', 'customerId', { unique: false });
-              s.createIndex('txDate', 'txDate', { unique: false });
-            }
-          });
-          if (!db.objectStoreNames.contains('workerAttendance')) {
-            const s = db.createObjectStore('workerAttendance', { keyPath: 'id' });
-            s.createIndex('workerId', 'workerId', { unique: false });
-            s.createIndex('date', 'date', { unique: false });
-          }
-          if (!db.objectStoreNames.contains('workerPayments')) {
-            const s = db.createObjectStore('workerPayments', { keyPath: 'id' });
-            s.createIndex('workerId', 'workerId', { unique: false });
-            s.createIndex('txDate', 'txDate', { unique: false });
-          }
-          ['expenses', 'incomes'].forEach((n) => {
-            if (!db.objectStoreNames.contains(n)) {
-              const s = db.createObjectStore(n, { keyPath: 'id' });
-              s.createIndex('txDate', 'txDate', { unique: false });
-            }
-          });
-        };
-        req.onsuccess = (e) => {
-          dbInstance = e.target.result;
-          dbInstance.onversionchange = () => { dbInstance.close(); dbInstance = null; };
-          resolve(dbInstance);
-        };
-        req.onerror = () => reject(req.error);
-      });
-    }
-
-    async function getAll(storeName) {
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const req = tx.objectStore(storeName).getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
-      });
-    }
-
-    async function putRecord(storeName, record) {
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        tx.objectStore(storeName).put(record);
-        tx.oncomplete = () => resolve(record);
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function deleteRecord(storeName, id) {
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        tx.objectStore(storeName).delete(id);
-        tx.oncomplete = () => resolve(true);
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function setMeta(key, value) {
-      return putRecord('meta', { key, value });
-    }
-
-    async function nextSequence(metaKey, startAt) {
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('meta', 'readwrite');
-        const store = tx.objectStore('meta');
-        const req = store.get(metaKey);
-        let nextVal = startAt;
-        req.onsuccess = () => {
-          const current = req.result ? Number(req.result.value) : startAt;
-          nextVal = current;
-          store.put({ key: metaKey, value: current + 1 });
-        };
-        tx.oncomplete = () => resolve(nextVal);
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function mergeCustomerRecords(sourceId, targetId) {
-      const db = await openDB();
-      const childStores = ['deposits', 'grindings', 'deliveries', 'customerPayments'];
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(['customers', ...childStores], 'readwrite');
-        childStores.forEach((stName) => {
-          const store = tx.objectStore(stName);
-          const req = store.index('customerId').getAll(sourceId);
-          req.onsuccess = () => {
-            (req.result || []).forEach((rec) => {
-              rec.customerId = targetId;
-              store.put(rec);
-            });
-          };
-        });
-        tx.objectStore('customers').delete(sourceId);
-        tx.oncomplete = () => resolve(true);
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function exportAllData() {
-      const data = {};
-      for (const st of STORES) data[st] = await getAll(st);
-      return {
-        app: 'MasterAttaChakkiSindhi',
-        owner: 'Sajjad Khan Wassan',
-        schemaVersion: DB_VERSION,
-        exportedAt: new Date().toISOString(),
-        stores: data
-      };
-    }
-
-    async function restoreAllData(backupObj) {
-      if (!backupObj || !backupObj.stores || typeof backupObj.stores !== 'object') {
-        throw new Error('INVALID_BACKUP');
-      }
-      for (const st of STORES) {
-        if (!Array.isArray(backupObj.stores[st])) throw new Error('MISSING_STORE_' + st);
-      }
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORES, 'readwrite');
-        STORES.forEach((st) => {
-          const store = tx.objectStore(st);
-          store.clear();
-          backupObj.stores[st].forEach((item) => store.put(item));
-        });
-        tx.oncomplete = () => resolve(true);
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function loadAllState() {
-      const results = await Promise.all(STORES.map((s) => getAll(s)));
-      const meta = {};
-      results[0].forEach((r) => { meta[r.key] = r.value; });
-      return {
-        meta,
-        customers: results[1],
-        workers: results[2],
-        deposits: results[3],
-        grindings: results[4],
-        deliveries: results[5],
-        customerPayments: results[6],
-        workerAttendance: results[7],
-        workerPayments: results[8],
-        expenses: results[9],
-        incomes: results[10]
-      };
-    }
-
-    /* ==================== 2. CONSTANTS & STATE ==================== */
-    const SINDHI_MONTHS = [
-      'جنوري', 'فيبروري', 'مارچ', 'اپريل', 'مئي', 'جون',
-      'جولاءِ', 'آگسٽ', 'سيپٽمبر', 'آڪٽوبر', 'نومبر', 'ڊسمبر'
-    ];
-    const EXPENSE_CATEGORIES = [
-      { key: 'electricity', label: 'بجلي' },
-      { key: 'diesel', label: 'ڊيزل' },
-      { key: 'repairs', label: 'مرمت' },
-      { key: 'transport', label: 'آمدورفت (ٽرانسپورٽ)' },
-      { key: 'worker_wages', label: 'مزدورن جو خرچ (اضافي)' },
-      { key: 'tea_food', label: 'چانهه ۽ کاڌو' },
-      { key: 'other', label: 'ٻيا خرچ' }
-    ];
-    const INCOME_CATEGORIES = [
-      { key: 'cash_grinding', label: 'نقد پيهائي' },
-      { key: 'bran_sale', label: 'چوڪر وڪرو' },
-      { key: 'flour_sale', label: 'اٽو وڪرو' },
-      { key: 'wheat_sale', label: 'ڪڻڪ وڪرو' },
-      { key: 'other_income', label: 'ٻي آمدني' }
-    ];
-    const PRODUCT_LABELS = { flour: 'اٽو', wheat: 'ڪڻڪ', bran: 'چوڪر', other: 'ٻيو مال' };
-    const ATTENDANCE_LABELS = { present: 'حاضر', half: 'اڌ ڏينهن', absent: 'غير حاضر' };
-
-    let state = {
-      meta: {}, customers: [], workers: [], deposits: [], grindings: [],
-      deliveries: [], customerPayments: [], workerAttendance: [],
-      workerPayments: [], expenses: [], incomes: []
-    };
-    let currentView = 'dashboard';
-    let isSubmitting = false;
-    let lastSubmitSig = '';
-    let lastSubmitTs = 0;
-    let currentReportData = null;
-
-    /* ==================== 3. HELPERS & ARITHMETIC ==================== */
-    function esc(str) {
-      return String(str == null ? '' : str)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
-    function uid(prefix) {
-      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    }
-    function getKarachiNow() {
-      const now = new Date();
-      try {
-        const parts = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-        }).formatToParts(now);
-        const map = {};
-        parts.forEach((p) => { map[p.type] = p.value; });
-        const hour = map.hour === '24' ? '00' : map.hour;
-        const date = `${map.year}-${map.month}-${map.day}`;
-        const time = `${hour}:${map.minute}`;
-        return { iso: now.toISOString(), date, time, fullTime: `${time}:${map.second}` };
-      } catch (e) {
-        const pkt = new Date(now.getTime() + 5 * 3600 * 1000);
-        const pad = (n) => String(n).padStart(2, '0');
-        const date = `${pkt.getUTCFullYear()}-${pad(pkt.getUTCMonth() + 1)}-${pad(pkt.getUTCDate())}`;
-        const time = `${pad(pkt.getUTCHours())}:${pad(pkt.getUTCMinutes())}`;
-        return { iso: now.toISOString(), date, time, fullTime: `${time}:${pad(pkt.getUTCSeconds())}` };
-      }
-    }
-    function formatDateSD(ymd) {
-      if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return ymd || '—';
-      const [y, m, d] = ymd.split('-');
-      return `${Number(d)} ${SINDHI_MONTHS[Number(m) - 1] || m} ${y}`;
-    }
-    function formatTimeSD(hhmm) {
-      if (!hhmm) return '';
-      const [hStr, mStr] = hhmm.split(':');
-      const h = Number(hStr);
-      let period = 'صبح';
-      if (h >= 12 && h < 17) period = 'منجهند';
-      else if (h >= 17 && h < 20) period = 'شام';
-      else if (h >= 20 || h < 4) period = 'رات';
-      const h12 = h % 12 === 0 ? 12 : h % 12;
-      return `${String(h12).padStart(2, '0')}:${mStr} ${period}`;
-    }
-    function addDaysYMD(ymd, delta) {
-      const [y, m, d] = ymd.split('-').map(Number);
-      const dt = new Date(Date.UTC(y, m - 1, d + delta));
-      const pad = (n) => String(n).padStart(2, '0');
-      return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
-    }
-    function toGrams(qty, unit) {
-      const n = Number(qty);
-      if (!Number.isFinite(n) || n < 0) return 0;
-      return unit === 'maund' ? Math.round(n * 40000) : Math.round(n * 1000);
-    }
-    function fmtNum(n, maxDec = 3) {
-      const rounded = Math.round(Number(n) * Math.pow(10, maxDec)) / Math.pow(10, maxDec);
-      return rounded.toLocaleString('en-US', { maximumFractionDigits: maxDec });
-    }
-    function fmtWeightDual(grams) {
-      const g = Math.round(Number(grams) || 0);
-      const sign = g < 0 ? '-' : '';
-      const abs = Math.abs(g);
-      const maunds = Math.floor(abs / 40000);
-      const remKg = (abs % 40000) / 1000;
-      const totalKg = abs / 1000;
-      if (abs === 0) return '0 ڪلوگرام';
-      if (maunds > 0 && remKg > 0) return `${sign}${maunds} من ${fmtNum(remKg)} ڪلو (${fmtNum(totalKg)} ڪلوگرام)`;
-      if (maunds > 0) return `${sign}${maunds} من (${fmtNum(totalKg)} ڪلوگرام)`;
-      return `${sign}${fmtNum(totalKg)} ڪلوگرام`;
-    }
-    function fmtWeightShort(grams) {
-      const g = Math.round(Number(grams) || 0);
-      const sign = g < 0 ? '-' : '';
-      const abs = Math.abs(g);
-      const maunds = Math.floor(abs / 40000);
-      const remKg = (abs % 40000) / 1000;
-      if (abs === 0) return '0 ڪلو';
-      if (maunds > 0 && remKg > 0) return `${sign}${maunds} من ${fmtNum(remKg)} ڪلو`;
-      if (maunds > 0) return `${sign}${maunds} من`;
-      return `${sign}${fmtNum(abs / 1000)} ڪلو`;
-    }
-    function toPaisa(rupees) {
-      const n = Number(rupees);
-      return Number.isFinite(n) ? Math.round(n * 100) : 0;
-    }
-    function fmtMoney(paisa) {
-      const p = Math.round(Number(paisa) || 0);
-      const formatted = (p / 100).toLocaleString('en-US', {
-        minimumFractionDigits: p % 100 === 0 ? 0 : 2, maximumFractionDigits: 2
-      });
-      return `<span class="ltr-num">${formatted}</span> رپيا`;
-    }
-    function fmtMoneyPlain(paisa) {
-      const p = Math.round(Number(paisa) || 0);
-      return `${(p / 100).toLocaleString('en-US', { maximumFractionDigits: 2 })} رپيا`;
-    }
-    function toast(msg, type = 'success') {
-      const wrap = document.getElementById('toastWrap');
-      const el = document.createElement('div');
-      el.className = `toast toast-${type}`;
-      el.textContent = msg;
-      wrap.appendChild(el);
-      setTimeout(() => el.remove(), 3400);
-    }
-    function confirmModal(title, message) {
-      return new Promise((resolve) => {
-        const root = document.getElementById('modalRoot');
-        root.classList.remove('hidden');
-        root.innerHTML = `
-          <div class="modal-box">
-            <div class="modal-header"><h3 style="margin:0;color:var(--navy);">${esc(title)}</h3></div>
-            <p style="font-weight:600;margin:8px 0 16px 0;">${esc(message)}</p>
-            <div style="display:flex;gap:10px;justify-content:flex-end;">
-              <button id="cmCancel" class="btn btn-light">رد ڪريو</button>
-              <button id="cmOk" class="btn btn-danger">پڪ ڪريو</button>
-            </div>
-          </div>
-        `;
-        document.getElementById('cmCancel').onclick = () => { root.classList.add('hidden'); root.innerHTML = ''; resolve(false); };
-        document.getElementById('cmOk').onclick = () => { root.classList.add('hidden'); root.innerHTML = ''; resolve(true); };
-      });
-    }
-    function preventDuplicate(sig) {
-      const now = Date.now();
-      if (isSubmitting) return true;
-      if (sig === lastSubmitSig && now - lastSubmitTs < 4000) return true;
-      isSubmitting = true;
-      lastSubmitSig = sig;
-      lastSubmitTs = now;
-      return false;
-    }
-    function releaseSubmit() { isSubmitting = false; }
-
-    async function hashPin(pin, salt) {
-      const text = `${salt}:${pin}:MasterChakki`;
-      if (window.crypto && window.crypto.subtle) {
-        try {
-          const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-          return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
-        } catch (e) {}
-      }
-      let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
-      for (let i = 0; i < text.length; i++) {
-        const ch = text.charCodeAt(i);
-        h1 = Math.imul(h1 ^ ch, 2654435761);
-        h2 = Math.imul(h2 ^ ch, 1597334677);
-      }
-      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-      return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
-    }
-
-    /* ==================== 4. ACCOUNTING CALCULATIONS ==================== */
-    function computeStock() {
-      const open = state.meta.openingStock || { wheatGrams: 0, flourGrams: 0, branGrams: 0, otherGrams: 0 };
-      let wheat = Number(open.wheatGrams || 0);
-      let flour = Number(open.flourGrams || 0);
-      let bran = Number(open.branGrams || 0);
-      let other = Number(open.otherGrams || 0);
-      state.deposits.forEach((d) => { wheat += d.grams; });
-      state.grindings.forEach((g) => {
-        wheat -= g.wheatGrams; flour += g.flourGrams; bran += g.branGrams; other += g.otherGrams;
-      });
-      state.deliveries.forEach((dl) => {
-        if (dl.product === 'wheat') wheat -= dl.grams;
-        else if (dl.product === 'flour') flour -= dl.grams;
-        else if (dl.product === 'bran') bran -= dl.grams;
-        else other -= dl.grams;
-      });
-      return { wheat, flour, bran, other };
-    }
-
-    function computeCustomerSummary(customerId) {
-      let wheatDeposited = 0, wheatProcessed = 0, flourProduced = 0, branProduced = 0;
-      let flourDelivered = 0, branDelivered = 0, wheatReturned = 0, otherDelivered = 0;
-      let chargesTotal = 0, paymentsTotal = 0;
-      state.deposits.forEach((d) => { if (d.customerId === customerId) wheatDeposited += d.grams; });
-      state.grindings.forEach((g) => {
-        if (g.customerId === customerId) {
-          wheatProcessed += g.wheatGrams; flourProduced += g.flourGrams;
-          branProduced += g.branGrams; chargesTotal += g.grindingChargesPaisa || 0;
-        }
-      });
-      state.deliveries.forEach((dl) => {
-        if (dl.customerId === customerId) {
-          if (dl.product === 'flour') flourDelivered += dl.grams;
-          else if (dl.product === 'bran') branDelivered += dl.grams;
-          else if (dl.product === 'wheat') wheatReturned += dl.grams;
-          else otherDelivered += dl.grams;
-        }
-      });
-      state.customerPayments.forEach((p) => { if (p.customerId === customerId) paymentsTotal += p.amountPaisa; });
-      return {
-        wheatDeposited, wheatProcessed, flourProduced, branProduced,
-        flourDelivered, branDelivered, wheatReturned, otherDelivered,
-        chargesTotal, paymentsTotal,
-        outstandingPaisa: chargesTotal - paymentsTotal,
-        remainingWheat: wheatDeposited - wheatProcessed - wheatReturned
-      };
-    }
-
-    function computeWorkerSummary(workerId, fromDate = null, toDate = null) {
-      let presentDays = 0, halfDays = 0, absentDays = 0, earnedPaisa = 0, advancePaidPaisa = 0, wagePaidPaisa = 0;
-      const inRange = (d) => (!fromDate || d >= fromDate) && (!toDate || d <= toDate);
-      state.workerAttendance.forEach((a) => {
-        if (a.workerId === workerId && inRange(a.date)) {
-          if (a.status === 'present') presentDays += 1;
-          else if (a.status === 'half') halfDays += 1;
-          else absentDays += 1;
-          earnedPaisa += a.earnedPaisa || 0;
-        }
-      });
-      state.workerPayments.forEach((p) => {
-        if (p.workerId === workerId && inRange(p.txDate)) {
-          if (p.paymentKind === 'advance') advancePaidPaisa += p.amountPaisa;
-          else wagePaidPaisa += p.amountPaisa;
-        }
-      });
-      const totalPaidPaisa = advancePaidPaisa + wagePaidPaisa;
-      return {
-        presentDays, halfDays, absentDays,
-        workingDays: presentDays + halfDays * 0.5,
-        earnedPaisa, advancePaidPaisa, wagePaidPaisa, totalPaidPaisa,
-        remainingPaisa: earnedPaisa - totalPaidPaisa
-      };
-    }
-
-    function computePeriodTotals(fromDate, toDate) {
-      const inRange = (d) => d >= fromDate && d <= toDate;
-      let wheatReceived = 0, wheatProcessed = 0, flourProduced = 0, branProduced = 0, otherProduced = 0;
-      let grindingChargesPaisa = 0, flourDelivered = 0, branDelivered = 0, wheatDelivered = 0, otherDelivered = 0;
-      let customerPaymentsPaisa = 0, workerPaymentsPaisa = 0, workerWagesEarnedPaisa = 0;
-      let expensesPaisa = 0, directIncomePaisa = 0;
-
-      state.deposits.forEach((d) => { if (inRange(d.txDate)) wheatReceived += d.grams; });
-      state.grindings.forEach((g) => {
-        if (inRange(g.txDate)) {
-          wheatProcessed += g.wheatGrams; flourProduced += g.flourGrams;
-          branProduced += g.branGrams; otherProduced += g.otherGrams;
-          grindingChargesPaisa += g.grindingChargesPaisa || 0;
-        }
-      });
-      state.deliveries.forEach((dl) => {
-        if (inRange(dl.txDate)) {
-          if (dl.product === 'flour') flourDelivered += dl.grams;
-          else if (dl.product === 'bran') branDelivered += dl.grams;
-          else if (dl.product === 'wheat') wheatDelivered += dl.grams;
-          else otherDelivered += dl.grams;
-        }
-      });
-      state.customerPayments.forEach((p) => { if (inRange(p.txDate)) customerPaymentsPaisa += p.amountPaisa; });
-      state.workerPayments.forEach((p) => { if (inRange(p.txDate)) workerPaymentsPaisa += p.amountPaisa; });
-      state.workerAttendance.forEach((a) => { if (inRange(a.date)) workerWagesEarnedPaisa += a.earnedPaisa || 0; });
-      state.expenses.forEach((e) => { if (inRange(e.txDate)) expensesPaisa += e.amountPaisa; });
-      state.incomes.forEach((i) => { if (inRange(i.txDate)) directIncomePaisa += i.amountPaisa; });
-
-      const totalIncomePaisa = directIncomePa
+<!DOCTYPE html><html lang="sd" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0d2a5c"><title>ماسٽر اٽي جي چڪي</title>
+<style>
+:root{--b:#0d2a5c;--l:#eef3fb;--w:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:"Noto Naskh Arabic","Noto Sans Arabic",Tahoma,sans-serif;background:var(--l);color:#111;font-size:18px;padding-bottom:76px}
+h1{background:var(--b);color:#fff;margin:0;padding:14px;font-size:20px;text-align:center}
+main{padding:12px}.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.c{background:var(--w);border-radius:12px;padding:12px;box-shadow:0 1px 3px #0003;margin-bottom:10px}
+.c b{display:block;font-size:22px;color:var(--b)}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--b)}
+nav button{flex:1;padding:16px 2px;border:0;background:none;color:#cfe;font:inherit;font-size:16px}nav .on{background:#1d4a9c;color:#fff}
+input,select{width:100%;padding:12px;font:inherit;border:1px solid #99a;border-radius:8px;margin:4px 0 10px;background:#fff}
+.r{display:flex;gap:6px}.r select{width:42%}
+button.p,button.s,.seg button{padding:14px;font:inherit;border-radius:10px;border:0;width:100%;margin:4px 0}
+button.p{background:var(--b);color:#fff}button.s{background:#dbe5f7;color:var(--b)}
+.seg{display:flex;gap:4px;margin-bottom:8px}.seg button{background:#dbe5f7;padding:10px 2px;font-size:16px}.seg .on{background:var(--b);color:#fff}
+.h{border-bottom:1px solid #ddd;padding:8px 0;font-size:16px}.h small{color:#556;display:block}
+.neg{color:#b00}label{font-size:16px}
+</style></head><body><h1>ماسٽر اٽي جي چڪي جو حساب</h1><main id="app"></main>
+<nav><button id="n-home" onclick="go('home')">مکيه</button><button id="n-cust" onclick="go('cust')">گراهڪ</button><button id="n-add" onclick="go('add')">داخلو</button><button id="n-bk" onclick="go('bk')">نقل</button></nav>
+<script>
+const $=s=>document.querySelector(s),TZ='Asia/Karachi';
+let db,tab='home',sel=null,et='dep',D={c:[],t:[]};
+const open=()=>new Promise((r,j)=>{const q=indexedDB.open('mac',1);q.onupgradeneeded=()=>{q.result.createObjectStore('cust',{keyPath:'id'});q.result.createObjectStore('tx',{keyPath:'id'})};q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>j(q.error)});
+const all=s=>new Promise(r=>{const q=db.transaction(s).objectStore(s).getAll();q.onsuccess=()=>r(q.result)});
+const put=(s,o)=>new Promise((r,j)=>{const t=db.transaction(s,'readwrite');t.objectStore(s).put(o);t.oncomplete=r;t.onerror=()=>j(t.error)});
+const del=(s,k)=>new Promise(r=>{const t=db.transaction(s,'readwrite');t.objectStore(s).delete(k);t.oncomplete=r});
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rd=(x,n=3)=>Math.round(x*10**n)/10**n;
+const toKg=(q,u)=>rd(q*(u=='mann'?40:1));
+const kk=x=>rd(x)+' ڪلو ('+rd(x/40)+' من)';
+const fdt=i=>new Intl.DateTimeFormat('en-GB',{timeZone:TZ,dateStyle:'short',timeStyle:'short'}).format(new Date(i));
+const dk=i=>new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date(i));
+const sum=(a,f)=>a.reduce((s,x)=>s+(f(x)||0),0);
+function stock(t){return{w:rd(sum(t,x=>x.type=='dep'?x.kg:0)-sum(t,x=>x.type=='grind'?x.wheat:0)-sum(t,x=>x.type=='del'&&x.prod=='w'?x.kg:0)),
+f:rd(sum(t,x=>x.type=='grind'?x.flour:0)-sum(t,x=>x.type=='del'&&x.prod=='f'?x.kg:0)),
+b:rd(sum(t,x=>x.type=='grind'?x.bran:0)-sum(t,x=>x.type=='del'&&x.prod=='b'?x.kg:0)),
+o:rd(sum(t,x=>x.type=='grind'?x.other:0))}}
+function bal(id){const t=D.t.filter(x=>x.cid==id),s=stock(t);return{...s,ch:sum(t,x=>x.type=='grind'?x.charge:0),pd:sum(t,x=>x.type=='pay'?x.amount:0)}}
+async function load(){D.c=await all('cust');D.t=(await all('tx')).sort((a,b)=>b.txAt.localeCompare(a.txAt))}
+async function go(t){tab=t;sel=null;await load();draw()}
+const cname=id=>{const c=D.c.find(x=>x.id==id);return c?esc(c.name)+' ('+c.no+')':'؟'};
+const TY={dep:'ڪڻڪ جمع',grind:'پيهڻ',del:'حوالي',pay:'ادائيگي'},PR={w:'ڪڻڪ',f:'اٽو',b:'ڀوسو'};
+function detail(x){return x.type=='dep'?kk(x.kg):x.type=='grind'?'ڪڻڪ '+kk(x.wheat)+' ← اٽو '+kk(x.flour)+' + ڀوسو '+kk(x.bran)+(x.other?' + ٻيو '+x.other+' ڪلو':'')+' | فرق: '+kk(rd(x.wheat-x.flour-x.bran-x.other))+' | چارج: '+x.charge+' روپيا':x.type=='del'?PR[x.prod]+' '+kk(x.kg):'رقم: '+x.amount+' روپيا'}
+function hist(a){return a.map(x=>`<div class=h><b>${TY[x.type]}</b> - ${cname(x.cid)}<br>${detail(x)}${x.desc?'<br>'+esc(x.desc):''}<small>تاريخ: ${fdt(x.txAt)} | داخل ڪيل: ${fdt(x.entryAt)}</small><button class=s onclick="rm('${x.id}')">حذف ڪريو</button></div>`).join('')||'<p>ڪو داخلو ناهي</p>'}
+async function rm(id){if(confirm('ڇا پڪ هي داخلو حذف ڪرڻو آهي؟')){await del('tx',id);await load();draw()}}
+function draw(){['home','cust','add','bk'].forEach(k=>$('#n-'+k).className=tab==k?'on':'');
+$('#app').innerHTML=tab=='home'?home():tab=='cust'?(sel?cdet():cust()):tab=='add'?addf():bk()}
+function home(){const td=dk(new Date()),t=D.t.filter(x=>dk(x.txAt)==td),s=stock(D.t),cd=(a,b)=>`<div class=c>${a}<b>${b}</b></div>`;
+return `<div class=g>${cd('اڄ ڪڻڪ آئي',kk(sum(t,x=>x.type=='dep'?x.kg:0)))}${cd('اڄ ڪڻڪ پيهي',kk(sum(t,x=>x.type=='grind'?x.wheat:0)))}${cd('اڄ اٽو ٺهيو',kk(sum(t,x=>x.type=='grind'?x.flour:0)))}${cd('اڄ ڀوسو ٺهيو',kk(sum(t,x=>x.type=='grind'?x.bran:0)))}${cd('اڄ حوالي ڪيو',kk(sum(t,x=>x.type=='del'?x.kg:0)))}${cd('اڄ گراهڪن جي ادائيگي',sum(t,x=>x.type=='pay'?x.amount:0)+' روپيا')}</div>
+<div class=c>ذخيرو (ڪل)<br>ڪڻڪ: <b>${kk(s.w)}</b>اٽو: <b>${kk(s.f)}</b>ڀوسو: <b>${kk(s.b)}</b>ٻيو: <b>${s.o} ڪلو</b></div>
+<div class=c>ڪل گراهڪ: <b>${D.c.filter(x=>!x.arch).length}</b></div>`}
+function cust(){const q=($('#sq')||{}).value||'';return `<button class=p onclick=addC()>+ نئون گراهڪ</button><input id=sq placeholder="نالو يا نمبر ڳوليو" oninput="clist()"><div id=cl>${cl('')}</div>`}
+function cl(q){return D.c.filter(c=>!c.arch&&(c.name+c.no+(c.ph||'')).includes(q)).map(c=>{const b=bal(c.id);return `<div class=c onclick="sel='${c.id}';draw()"><b>${esc(c.name)} (${c.no})</b>ڳوٺ: ${esc(c.vil)} | ڪڻڪ باقي: ${kk(b.w)}<br>باقي رقم: ${b.ch-b.pd} روپيا</div>`}).join('')||'<p>ڪو گراهڪ ناهي</p>'}
+function clist(){$('#cl').innerHTML=cl($('#sq').value)}
+async function addC(unk){const n=D.c.reduce((m,x)=>Math.max(m,x.no),0)+1;let name=unk?'اڻڄاتل '+n:prompt('گراهڪ جو نالو:');if(!name)return;
+const c={id:uid('c'),no:n,name,ph:unk?'':prompt('فون نمبر:')||'',vil:unk?'':prompt('ڳوٺ:')||'',made:new Date().toISOString(),temp:!!unk};await put('cust',c);await load();return c}
+function cdet(){const c=D.c.find(x=>x.id==sel),b=bal(sel);return `<button class=s onclick="sel=null;draw()">← واپس</button><div class=c><b>${esc(c.name)} (${c.no})</b>فون: ${esc(c.ph)} | ڳوٺ: ${esc(c.vil)}<br>کاتو کليو: ${fdt(c.made)}<hr>ڪڻڪ باقي: ${kk(b.w)}<br>اٽو باقي: ${kk(b.f)}<br>ڀوسو باقي: ${kk(b.b)}<br>پيهائي چارج: ${b.ch} | ادا ڪيل: ${b.pd} | <b class=neg>باقي: ${b.ch-b.pd} روپيا</b></div>
+<button class=s onclick=ren()>نالو بدلايو</button><button class=s onclick=arch()>آرڪائيو ڪريو</button>${hist(D.t.filter(x=>x.cid==sel))}`}
+async function ren(){const c=D.c.find(x=>x.id==sel),n=prompt('نئون نالو:',c.name);if(n){c.name=n;c.ph=prompt('فون نمبر:',c.ph)||'';c.vil=prompt('ڳوٺ:',c.vil)||'';c.temp=false;await put('cust',c);await load();draw()}}
+async function arch(){if(confirm('گراهڪ آرڪائيو ڪجي؟ (رڪارڊ ڪونه ڊهندو)')){const c=D.c.find(x=>x.id==sel);c.arch=1;await put('cust',c);sel=null;await load();draw()}}
+const qf=(id,l)=>`<label>${l}</label><div class=r><input id=${id} type=number step=any min=0 inputmode=decimal><select id=${id}u><option value=mann>من</option><option value=kg>ڪلوگرام</option></select></div>`;
+function addf(){const cs=D.c.filter(x=>!x.arch);
+const f=et=='dep'?qf('q','ڪڻڪ جي مقدار'):et=='grind'?qf('w','ڪڻڪ پيهي')+qf('f','اٽو ٺهيو')+qf('b','ڀوسو ٺهيو')+'<label>ٻيو (ڪلوگرام)</label><input id=o type=number step=any min=0 inputmode=decimal><label>پيهائي جو چارج (روپيا)</label><input id=ch type=number min=0 inputmode=decimal>':et=='del'?'<label>شيءِ</label><select id=pr><option value=f>اٽو</option><option value=w>ڪڻڪ</option><option value=b>ڀوسو</option></select>'+qf('q','مقدار'):'<label>رقم (روپيا)</label><input id=am type=number min=0 inputmode=decimal>';
+return `<div class=seg>${Object.keys(TY).map(k=>`<button class="${et==k?'on':''}" onclick="et='${k}';draw()">${TY[k]}</button>`).join('')}</div>
+<label>گراهڪ</label><select id=fc>${cs.map(c=>`<option value="${c.id}">${esc(c.name)} (${c.no})</option>`).join('')}</select><button class=s onclick="newU()">+ اڻڄاتل گراهڪ</button>${f}
+<label><input type=checkbox id=old style="width:auto" onchange="$('#fd').hidden=!this.checked"> پراڻي تاريخ چونڊيو</label><input id=fd type=datetime-local hidden>
+<label>تفصيل</label><input id=fn><button class=p onclick=save()>محفوظ ڪريو</button><small>تاريخ ۽ وقت فون مان پاڻمرادو ٿو وٺجي</small>`}
+async function newU(){await addC(1);draw()}
+async function save(){const cid=$('#fc').value;if(!cid)return alert('پهرين گراهڪ چونڊيو');
+const g=i=>parseFloat($('#'+i)?.value)||0,kg=i=>toKg(g(i),$('#'+i+'u')?.value),now=new Date().toISOString();
+let txAt=now;if($('#old').checked){if(!$('#fd').value)return alert('تاريخ چونڊيو');txAt=new Date($('#fd').value).toISOString()}
+const t={id:uid('t'),type:et,cid,entryAt:now,txAt,desc:$('#fn').value.trim()},s=stock(D.t),b=bal(cid);
+if(et=='dep'){t.kg=kg('q');if(t.kg<=0)return alert('مقدار لکو')}
+else if(et=='grind'){Object.assign(t,{wheat:kg('w'),flour:kg('f'),bran:kg('b'),other:rd(g('o')),charge:g('ch')});if(t.wheat<=0)return alert('ڪڻڪ جي مقدار لکو');
+if(t.wheat>s.w||t.wheat>b.w)return alert('ڊيڄاريندڙ: ڪڻڪ ڪافي ناهي! ذخيرو: '+kk(s.w)+' | گراهڪ جي باقي: '+kk(b.w));
+const d=rd(t.wheat-t.flour-t.bran-t.other);if(d<0&&!confirm('ٺهيل مال ڪڻڪ کان وڌيڪ آهي. ڇا ساڳيو محفوظ ڪجي؟'))return;}
+else if(et=='del'){t.prod=$('#pr').value;t.kg=kg('q');if(t.kg<=0)return alert('مقدار لکو');if(t.kg>s[t.prod]||t.kg>b[t.prod])return alert('ڊيڄاريندڙ: ڪافي مال ناهي! ذخيرو: '+kk(s[t.prod])+' | گراهڪ جو باقي: '+kk(b[t.prod]))}
+else{t.amount=g('am');if(t.amount<=0)return alert('رقم لکو')}
+await put('tx',t);await load();alert('محفوظ ٿي ويو');sel=cid;tab='cust';draw()}
+function bk(){return `<button class=p onclick=exp()>نقل محفوظ ڪريو (فائل)</button><label>نقل بحال ڪريو:</label><input type=file accept=".json" onchange="imp(this.files[0])"><p>نقل فائل کي پنهنجي فون ۾ محفوظ رکو. بحال ڪرڻ سان پراڻا رڪارڊ ڪونه ڊهندا، نقلي داخلا ٻيهر نه ٿيندا.</p>`}
+function exp(){const b=new Blob([JSON.stringify({v:1,at:new Date().toISOString(),c:D.c,t:D.t})],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='chakki-backup-'+dk(new Date())+'.json';a.click()}
+async function imp(f){if(!f)return;try{const j=JSON.parse(await f.text());if(!Array.isArray(j.c)||!Array.isArray(j.t))throw 0;if(!confirm('بحال ڪجي؟'))return;for(const c of j.c)await put('cust',c);for(const t of j.t)await put('tx',t);await load();alert('بحال ٿي ويو');draw()}catch(e){alert('هي فائل صحيح ناهي')}}
+open().then(()=>go('home'));
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+</script></body></html>
